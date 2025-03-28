@@ -1,0 +1,14 @@
+%{
+int const_count=0;
+%}
+%%
+[b-df-hj-np-tv-zB-DF-HJ-NP-TV-Z] {const_count++;}
+%%
+int yywrap(){}
+int main()
+{
+printf("enter the string of vowels and consonents:");
+yylex();
+printf("number of consonents are:%d\n",const_count);
+return 0;
+}

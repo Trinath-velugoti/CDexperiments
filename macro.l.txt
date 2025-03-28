@@ -1,0 +1,36 @@
+%{
+#include <stdio.h>
+int num_macros = 0;
+int num_includes = 0;
+%}
+
+%%
+
+"#define"              { num_macros++; }
+"#include"             { num_includes++; }
+.|\n                   { /* Ignore all other characters */ }
+
+%%
+
+int main(int argc, char *argv[])
+{
+    if (argc > 1) {
+        FILE *file = fopen(argv[1], "r");
+        if (!file) {
+            perror("Error opening file");
+            return 1;
+        }
+        yyin = file;
+    } else {
+        yyin = stdin;
+    }
+
+    yylex();
+    printf("Number of macros defined: %d\n", num_macros);
+    printf("Number of header files included: %d\n", num_includes);
+
+    return 0;
+}
+int yywrap() {
+    return 1;
+}

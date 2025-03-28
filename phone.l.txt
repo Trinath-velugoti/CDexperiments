@@ -1,0 +1,21 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
+%%
+
+[789][0-9]{9}    { printf("Valid Mobile Number: %s\n", yytext); }
+.|\n             { printf("Invalid Mobile Number: %s\n", yytext); }
+
+%%
+
+int main() {
+    printf("Enter a mobile number: ");
+    yylex();
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}

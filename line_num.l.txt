@@ -1,0 +1,34 @@
+%{
+#include <stdio.h>
+int line_number = 1;
+%}
+
+%%
+\n                { printf("%4d: %s", line_number++, yytext); }
+.|\n              { ECHO; }
+
+%%
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    FILE *infile = fopen(argv[1], "r");
+    if (!infile) {
+        perror("Opening input file");
+        return 1;
+    }
+
+    yyin = infile;
+
+    yylex();
+
+    fclose(infile);
+
+    return 0;
+}
+int yywrap(){
+return 1;
+}

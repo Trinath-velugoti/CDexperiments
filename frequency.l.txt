@@ -1,0 +1,45 @@
+%{
+#include <stdio.h>
+#include <string.h>
+
+int word_count = 0;
+char target_word[100];
+%}
+
+%%
+[a-zA-Z]+ {
+    if (strcmp(yytext, target_word) == 0) {
+        word_count++;
+    }
+}
+.|\n { /* Ignore other characters and newlines */ }
+%%
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        fprintf(stderr, "Usage: %s <target_word> <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    strcpy(target_word, argv[1]);
+
+    FILE *infile = fopen(argv[2], "r");
+    if (!infile) {
+        perror("Opening input file");
+        return 1;
+    }
+
+    yyin = infile;
+
+    yylex();
+
+    fclose(infile);
+
+    printf("The word '%s' occurred %d times\n", target_word, word_count);
+
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}

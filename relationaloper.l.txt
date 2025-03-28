@@ -1,0 +1,24 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+%}
+
+%%
+"=="          { printf("Equal to\n"); }
+"!="          { printf("Not equal to\n"); }
+"<="          { printf("Less than or equal to\n"); }
+">="          { printf("Greater than or equal to\n"); }
+"<"           { printf("Less than\n"); }
+">"           { printf("Greater than\n"); }
+
+%%
+
+int main() {
+    yylex();
+    return 0;
+}
+int yywrap(){
+return 0;
+}
+ 		

@@ -1,0 +1,45 @@
+%{
+#include <stdio.h>
+int comment_count = 0;
+%}
+
+%%
+"/*"([^*]|\*+[^*/])*\*+"/"    { comment_count++; }
+"//".*                       { comment_count++; }
+.                            { ECHO; }
+
+%%
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <input_file> <output_file>\n", argv[0]);
+        return 1;
+    }
+
+    FILE *infile = fopen(argv[1], "r");
+    if (!infile) {
+        perror("Opening input file");
+        return 1;
+    }
+
+    yyin = infile;
+
+    FILE *outfile = fopen(argv[2], "w");
+    if (!outfile) {
+        perror("Opening output file");
+        return 1;
+    }
+
+    yyout = outfile;
+
+    yylex();
+    
+    printf("Number of comment lines: %d\n", comment_count);
+
+    fclose(infile);
+    fclose(outfile);
+
+    return 0;
+}
+int yywrap(){
+return 1;
+}

@@ -1,0 +1,33 @@
+%{
+#include <stdio.h>
+int char_count = 0, word_count = 0, line_count = 0;
+%}
+
+%%
+"/*"([^*]|\*+[^*/])*"*/"   {/* Ignore multi-line comments */}
+"//".*                      {/* Ignore single-line comments */}
+[ \t]                        {/* Ignore spaces and tabs */}
+\n                          { line_count++; }
+[a-zA-Z_][a-zA-Z0-9_]*      { word_count++; char_count += yyleng; }
+[0-9]+                      { word_count++; char_count += yyleng; }
+.                           { char_count++; }
+%%
+
+int main(int argc, char **argv) {
+    FILE *fp;
+    if(argc > 1) {
+        fp = fopen(argv[1], "r");
+        if(fp) yyin = fp;
+        else {
+            printf("Error opening file %s\n", argv[1]);
+            return 1;
+        }
+    }
+    yylex();
+    printf("Characters: %d\nWords: %d\nLines: %d\n", char_count, word_count, line_count);
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}
